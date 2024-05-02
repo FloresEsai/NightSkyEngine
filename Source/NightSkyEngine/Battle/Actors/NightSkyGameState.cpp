@@ -1382,6 +1382,13 @@ void ANightSkyGameState::ManageAudio()
 		AudioManager->AnnouncerVoicePlayer->Stop();
 		AudioManager->AnnouncerVoicePlayer->SetSound(nullptr);
 	}
+	const int CurrentBattleAudioTime = BattleState.FrameNumber - BattleState.BattleMusicChannel.StartingFrame;
+	if (!BattleState.BattleMusicChannel.Finished && static_cast<int>(BattleState.BattleMusicChannel.MaxDuration * 60) < CurrentBattleAudioTime + 0.2)
+	{
+		BattleState.BattleMusicChannel.Finished = true;
+		AudioManager->BattleMusicPlayer->Stop();
+		AudioManager->BattleMusicPlayer->SetSound(nullptr);
+	}
 }
 
 void ANightSkyGameState::RollbackStartAudio() const
@@ -1437,6 +1444,17 @@ void ANightSkyGameState::RollbackStartAudio() const
 		{
 			//AudioManager->AnnouncerVoicePlayer->SetFloatParameter(FName(TEXT("Start Time")), CurrentAudioTime);
 			AudioManager->AnnouncerVoicePlayer->Play(CurrentAudioTime);
+		}
+	}
+	if (BattleState.BattleMusicChannel.SoundWave != AudioManager->BattleMusicPlayer->GetSound())
+	{
+		AudioManager->BattleMusicPlayer->Stop();
+		AudioManager->BattleMusicPlayer->SetSound(BattleState.BattleMusicChannel.SoundWave);
+		const float CurrentAudioTime = static_cast<float>(BattleState.FrameNumber - BattleState.BattleMusicChannel.StartingFrame) / 60.f;
+		if (!BattleState.BattleMusicChannel.Finished && !AudioManager->BattleMusicPlayer->IsPlaying())
+		{
+			//AudioManager->BattleMusicPlayer->SetFloatParameter(FName(TEXT("Start Time")), CurrentAudioTime);
+			AudioManager->BattleMusicPlayer->Play(CurrentAudioTime);
 		}
 	}
 }
