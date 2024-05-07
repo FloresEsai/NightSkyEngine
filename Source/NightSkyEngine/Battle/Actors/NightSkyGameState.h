@@ -116,6 +116,8 @@ struct FBattleState
 	FAudioChannel CharaAudioChannels[CharaAudioChannelCount];
 	FAudioChannel CharaVoiceChannels[CharaVoiceChannelCount];
 	FAudioChannel AnnouncerVoiceChannel;
+
+	UPROPERTY(EditAnywhere)
 	FAudioChannel BattleMusicChannel;
 
 	char BattleStateSyncEnd;
